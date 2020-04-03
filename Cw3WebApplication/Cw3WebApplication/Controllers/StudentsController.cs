@@ -44,7 +44,7 @@ namespace Cw3WebApplication.Controllers
         public IActionResult CreateStudent(Student student) 
         {
             student.IndexNumber = $"s{new Random().Next(1, 10000)}";
-            //_dbService.AddStudent(student);
+            _dbService.AddStudent(student);
             return Ok(student);
         }
 

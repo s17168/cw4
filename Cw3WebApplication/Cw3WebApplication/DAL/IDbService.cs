@@ -9,6 +9,7 @@ namespace Cw3WebApplication.DAL
     public interface IDbService
     {
         IEnumerable<Student> GetStudents();
+        void AddStudent(Student student);
 
     }
 }
