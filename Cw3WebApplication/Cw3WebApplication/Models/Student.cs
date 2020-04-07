@@ -9,5 +9,9 @@
         public int IdEnrollment { get; set; }
         public string BirthDate { get; set; }
 
+        // additional info:
+        public string StudyName { get; set; }
+        public int Semester { get; set; }
+
     }
 }
