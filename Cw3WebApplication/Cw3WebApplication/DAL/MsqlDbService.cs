@@ -69,6 +69,9 @@ namespace Cw3WebApplication.DAL
 
                 connection.Open();
 
+                // SQL injetion example: hit following URL to drop table Student
+                // localhost:51290/api/students/23';%20drop%20table%20student;%20select%20*%20from%20student%20where%20FirstName%20=%20'/enrollment
+
                 var dr = command.ExecuteReader();
                 while (dr.Read())
                 {
