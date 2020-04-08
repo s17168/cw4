@@ -65,13 +65,15 @@ namespace Cw3WebApplication.DAL
                 command.Connection = connection;
                 command.CommandText = "select IndexNumber, Enrollment.IdEnrollment, Enrollment.Semester, Enrollment.IdStudy, " 
                     + "Enrollment.StartDate from Student inner join Enrollment on Enrollment.idEnrollment = student.idEnrollment "
-                    + "where Student.IndexNumber = '" + idStudent + "';";
+                    + "where Student.IndexNumber = @id" + ";";
 
-                connection.Open();
-
+                command.Parameters.AddWithValue("@id", idStudent);  // this prevents below sql injection
+               
                 // SQL injetion example: hit following URL to drop table Student
                 // localhost:51290/api/students/23';%20drop%20table%20student;%20select%20*%20from%20student%20where%20FirstName%20=%20'/enrollment
-
+                
+                connection.Open();
+                
                 var dr = command.ExecuteReader();
                 while (dr.Read())
                 {

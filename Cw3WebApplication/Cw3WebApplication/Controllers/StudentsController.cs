@@ -66,7 +66,7 @@ namespace Cw3WebApplication.Controllers
             return Ok("Usuwanie ukonczone dla studenta id = " + id);
         }
 
-        [HttpGet("{idStudent}")]
+        [HttpGet]
         [Route("{idStudent}/enrollment")]
         public IActionResult GetEnrollment(string idStudent)
         {
