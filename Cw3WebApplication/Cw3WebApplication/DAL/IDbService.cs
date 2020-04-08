@@ -11,5 +11,7 @@ namespace Cw3WebApplication.DAL
         IEnumerable<Student> GetStudents();
         void AddStudent(Student student);
 
+        Enrollment GetEnrollment(string idStudent);
+
     }
 }

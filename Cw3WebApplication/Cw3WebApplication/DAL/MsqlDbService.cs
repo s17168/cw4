@@ -24,6 +24,8 @@ namespace Cw3WebApplication.DAL
 
         public IEnumerable<Student> GetStudents()
         {
+            _students = new List<Student>(); //clean already added students, alwes retrieve new List from DB
+
             using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
             using (var command = new SqlCommand())
             {
@@ -52,6 +54,36 @@ namespace Cw3WebApplication.DAL
                 }
             }
             return _students;
+        }
+
+        public Enrollment GetEnrollment(string idStudent)
+        {
+            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var command = new SqlCommand())
+            {
+                Console.WriteLine(idStudent);
+                command.Connection = connection;
+                command.CommandText = "select IndexNumber, Enrollment.IdEnrollment, Enrollment.Semester, Enrollment.IdStudy, " 
+                    + "Enrollment.StartDate from Student inner join Enrollment on Enrollment.idEnrollment = student.idEnrollment "
+                    + "where Student.IndexNumber = '" + idStudent + "';";
+
+                connection.Open();
+
+                var dr = command.ExecuteReader();
+                while (dr.Read())
+                {
+                    Console.WriteLine(dr);
+                    var enrolment = new Enrollment
+                    {
+                        IdEnrollment = Int16.Parse(dr["IdEnrollment"].ToString()),
+                        Semester = Int16.Parse(dr["Semester"].ToString()),
+                        IdStudy = Int16.Parse(dr["IdStudy"].ToString()),
+                        StartDate = dr["StartDate"].ToString()
+                    };
+                    return enrolment;
+                }
+            }
+            throw new Exception("Error fetching query from DB or student with id " + idStudent + " doesn't exist or is not enrolled"); // should not happen
         }
 
     }

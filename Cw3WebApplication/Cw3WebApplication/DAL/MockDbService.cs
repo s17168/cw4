@@ -26,6 +26,11 @@ namespace Cw3WebApplication.DAL
             _students.Add(student);
         }
 
+        public Enrollment GetEnrollment(string idStudent)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Student> GetStudents()
         {
             return _students;
