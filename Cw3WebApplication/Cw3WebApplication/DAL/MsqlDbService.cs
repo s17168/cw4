@@ -47,7 +47,7 @@ namespace Cw3WebApplication.DAL
                     student.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
                     student.IdEnrollment = Int16.Parse(dr["IdEnrollment"].ToString());
 
-                    student.StudyName = dr["Name"].ToString();
+                    student.Studies = dr["Name"].ToString();
                     student.Semester = Int16.Parse(dr["Semester"].ToString());
 
                     _students.Add(student);

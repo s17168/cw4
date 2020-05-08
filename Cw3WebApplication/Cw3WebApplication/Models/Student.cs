@@ -11,7 +11,7 @@ namespace Cw3WebApplication.Models
         public DateTime BirthDate { get; set; }
 
         // additional info:
-        public string StudyName { get; set; }
+        public string Studies { get; set; } //it is "StudyName" id DB
         public int Semester { get; set; }
 
     }
