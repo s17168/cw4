@@ -24,8 +24,8 @@ BEGIN
 		RAISERROR(15600, -1, -1, 'There are no students on given studies and semester');
 
 	-- dopisanie studentow z danego kierunku na kolejny semestr
-	--UPDATE Enrollment SET Semester = @existingSemester + 1
-	--WHERE IdStudy = (SELECT Studies.IdStudy FROM Studies WHERE Name = @studyName)
+	UPDATE Enrollment SET Semester = @existingSemester + 1
+	WHERE IdStudy = (SELECT Studies.IdStudy FROM Studies WHERE Name = @studyName)
 	COMMIT
 END
 GO

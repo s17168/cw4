@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Wyklad5.Services;
 
 namespace Cw3WebApplication
 {
@@ -26,6 +27,7 @@ namespace Cw3WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IDbService, MsqlDbService>();
+            services.AddTransient<IStudentsDbService, SqlServerStudentDbService>();
             services.AddControllers();
         }
 
