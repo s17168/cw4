@@ -50,12 +50,12 @@ namespace Cw3WebApplication.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult UpdateStudent(Student student, int id)
+        public IActionResult UpdateStudent(Student student, string id)
         {
-            var studentId = student.IdStudent;
+            var studentId = student.IndexNumber;
             // update student
 
-            return Ok("Akutalizacja dokonczona dla studenta " + id);
+            return Ok("Akutalizacja dokonczona dla studenta " + studentId);
         }
 
         [HttpDelete("{id}")]

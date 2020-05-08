@@ -14,9 +14,9 @@ namespace Cw3WebApplication.DAL
         {
             _students = new List<Student>
             { 
-                new Student{IdStudent = 1, FirstName = "Jan", LastName = "Kowalski" },
-                new Student{IdStudent = 2, FirstName = "Anna", LastName = "Modela" },
-                new Student{IdStudent = 3, FirstName = "Andy", LastName = "Andes" },
+                new Student{IndexNumber = "s1", FirstName = "Jan", LastName = "Kowalski" },
+                new Student{IndexNumber = "s2", FirstName = "Anna", LastName = "Modela" },
+                new Student{IndexNumber = "s3", FirstName = "Andy", LastName = "Andes" },
 
             };
         }
