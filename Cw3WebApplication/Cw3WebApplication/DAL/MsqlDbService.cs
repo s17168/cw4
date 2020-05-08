@@ -44,7 +44,7 @@ namespace Cw3WebApplication.DAL
                     student.FirstName = dr["FirstName"].ToString();
                     student.LastName = dr["LastName"].ToString();
                     student.IndexNumber = dr["IndexNumber"].ToString();
-                    student.BirthDate = dr["BirthDate"].ToString();
+                    student.BirthDate = Convert.ToDateTime(dr["BirthDate"].ToString());
                     student.IdEnrollment = Int16.Parse(dr["IdEnrollment"].ToString());
 
                     student.StudyName = dr["Name"].ToString();
