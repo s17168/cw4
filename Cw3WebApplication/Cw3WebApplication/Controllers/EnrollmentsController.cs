@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using Cw3WebApplication.DTOs.Requests;
 using Cw3WebApplication.DTOs.Responses;
@@ -114,6 +115,27 @@ namespace Cw3WebApplication.Controllers
             return Ok(response);
         }
 
+        //promotes all students of given study name to given semester
+        [HttpPost]
+        [Route("promotions")]
+        public IActionResult PromoteStudents(int Semester, string Studies) // params not in body but in query string! 
+        {
+            Console.WriteLine(Semester + " " + Studies);
+            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var command = new SqlCommand("PromoteStudents"))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Connection = connection;
+                
+                command.Parameters.AddWithValue("@studyName", Studies);
+                command.Parameters.AddWithValue("@existingSemester", Semester);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            return Ok("Successfully promoted all students to next semester");
+        }
 
     }
 }
