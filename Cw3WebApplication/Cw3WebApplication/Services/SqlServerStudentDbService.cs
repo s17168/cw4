@@ -1,5 +1,6 @@
 ﻿using Cw3WebApplication.DTOs.Requests;
 using Cw3WebApplication.DTOs.Responses;
+using Cw3WebApplication.Models;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -127,8 +128,37 @@ namespace Wyklad5.Services
 
                 connection.Open();
                 command.ExecuteNonQuery();
-            }
-            
+            }   
         }
+
+        public Student GetStudent(string index)
+        {
+            var student = new Student();
+
+            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+
+                //command.CommandText= "SELECT * FROM Student;";
+                command.CommandText="SELECT * FROM Student WHERE Student.IndexNumber = @index;";
+                command.Parameters.AddWithValue("@index", index);
+
+                connection.Open();
+
+                var dr = command.ExecuteReader();
+
+                if (!dr.Read())
+                {
+                    return null;
+                }
+                student.FirstName = dr["FirstName"].ToString();
+                student.LastName = dr["LastName"].ToString();
+                student.IndexNumber = dr["IndexNumber"].ToString();
+            }
+            return student;
+        }
+
+
     }
 }

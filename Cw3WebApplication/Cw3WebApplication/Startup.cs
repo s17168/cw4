@@ -1,6 +1,7 @@
 using Cw3WebApplication.DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,6 +22,7 @@ namespace Cw3WebApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddScoped<>
             services.AddSingleton<IDbService, MsqlDbService>();
             services.AddTransient<IStudentsDbService, SqlServerStudentDbService>();
             services.AddControllers();
@@ -33,8 +35,10 @@ namespace Cw3WebApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, 
+            IStudentsDbService service)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -46,9 +50,29 @@ namespace Cw3WebApplication
                 config.SwaggerEndpoint("/swagger/v1/swagger.json", "Students App API");
             });
 
-            app.UseRouting();
-
             app.UseAuthorization();
+
+            app.Use(async (context, next) =>
+            {
+                if (!context.Request.Headers.ContainsKey("Index")) 
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await context.Response.WriteAsync("Musisz podac numer indeksu");
+                    return;
+                }
+                string index = context.Request.Headers["Index"].ToString();
+                var student = service.GetStudent(index);
+                if (student == null) 
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    await context.Response.WriteAsync("Student o podanym numerze indeksu nie istnieje");
+                    return;
+                }
+
+                await next(); // idziemy do kolejnego middleware
+            });
+
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
