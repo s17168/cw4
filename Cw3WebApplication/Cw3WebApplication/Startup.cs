@@ -1,4 +1,5 @@
 using Cw3WebApplication.DAL;
+using Cw3WebApplication.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -49,6 +50,9 @@ namespace Cw3WebApplication
             app.UseSwaggerUI( config => {
                 config.SwaggerEndpoint("/swagger/v1/swagger.json", "Students App API");
             });
+
+            // Add LoggingMiddleware
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseAuthorization();
 
