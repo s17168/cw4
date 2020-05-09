@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Cw3WebApplication.DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Wyklad5.Services;
 
 namespace Cw3WebApplication
@@ -29,6 +24,12 @@ namespace Cw3WebApplication
             services.AddSingleton<IDbService, MsqlDbService>();
             services.AddTransient<IStudentsDbService, SqlServerStudentDbService>();
             services.AddControllers();
+
+            // 1. Add documentation
+            services.AddSwaggerGen(config =>
+            {
+                config.SwaggerDoc("v1", new OpenApiInfo { Title = "Students API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +39,12 @@ namespace Cw3WebApplication
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // 2. Add documentation - add middleware
+            app.UseSwagger();
+            app.UseSwaggerUI( config => {
+                config.SwaggerEndpoint("/swagger/v1/swagger.json", "Students App API");
+            });
 
             app.UseRouting();
 
