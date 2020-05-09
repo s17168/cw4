@@ -47,6 +47,8 @@ namespace Cw3WebApplication
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             // 2. Add documentation - add middleware
             app.UseSwagger();
             app.UseSwaggerUI( config => {
