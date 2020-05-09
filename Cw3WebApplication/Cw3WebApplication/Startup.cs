@@ -1,5 +1,6 @@
 using Cw3WebApplication.DAL;
 using Cw3WebApplication.Middleware;
+using Cw3WebApplication.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +27,7 @@ namespace Cw3WebApplication
             //services.AddScoped<>
             services.AddSingleton<IDbService, MsqlDbService>();
             services.AddTransient<IStudentsDbService, SqlServerStudentDbService>();
+            services.AddScoped<LoggingService>();
             services.AddControllers();
 
             // 1. Add documentation

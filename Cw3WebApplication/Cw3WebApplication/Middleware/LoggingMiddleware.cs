@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Cw3WebApplication.Services;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Cw3WebApplication.Middleware
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, IStudentsDbService dbService)
+        public async Task InvokeAsync(HttpContext context, LoggingService loggingService)
         {
             context.Request.EnableBuffering();
             if (context.Request != null)
@@ -36,15 +37,7 @@ namespace Cw3WebApplication.Middleware
                     context.Request.Body.Position = 0;
                 }
                 // zapisac do pliku / DB
-                var filepath = "Logs/requestLog.txt";
-                using (StreamWriter sw = File.AppendText(filepath))
-                {
-                    sw.WriteLine("Method: " + method
-                        + ", Path: " + path
-                        + ", Request Body: " + bodyStr
-                        + ", QueryStr: " + queryStr
-                        );
-                }
+                loggingService.logToFile(method, path, bodyStr, queryStr);
             }
 
             if (_next != null) await _next(context);
