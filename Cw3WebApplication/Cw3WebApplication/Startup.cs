@@ -60,7 +60,8 @@ namespace Cw3WebApplication
 
             app.UseAuthorization();
 
-            app.Use(async (context, next) =>
+            // disable middleware which checks for index in header
+            /*app.Use(async (context, next) =>
             {
                 if (!context.Request.Headers.ContainsKey("Index")) 
                 {
@@ -79,6 +80,7 @@ namespace Cw3WebApplication
 
                 await next(); // idziemy do kolejnego middleware
             });
+            */
 
             app.UseRouting();
 
