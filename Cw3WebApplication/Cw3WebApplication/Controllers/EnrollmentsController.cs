@@ -78,27 +78,29 @@ namespace Cw3WebApplication.Controllers
                 return BadRequest("Password dont match");
             }
 
-            var claims = new[]
-{
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                //new Claim(ClaimTypes.Name, "jan123"),
-                //new Claim(ClaimTypes.Role, "admin"),
-                new Claim(ClaimTypes.Role, "student")
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken
-            (
-                issuer: "Gakko",
-                audience: "Students",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
-                signingCredentials: creds
-            );
+            var token = _studentsDbService.GetJwtToken();
 
             //return Ok("success");
+            return Ok(new
+            {
+                accessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                refreshToken = Guid.NewGuid() // is unique and has no information 
+            });
+        }
+
+        [HttpPost("refresh-token/{reftoken}")]
+        public IActionResult RefreshToken(string reftoken)
+        {
+            Console.WriteLine("Refresh token from client: "+ reftoken);
+            // spr w bazie czy istnieje juz token - jak tak to zwracamy nowy
+            bool tokenExists = true; // nie implementuje spr w bazie bo to bedzie bardzo podobne do tego co wyzej
+            if (!tokenExists)
+            {
+                return BadRequest();
+            }
+
+            var token = _studentsDbService.GetJwtToken();
+
             return Ok(new
             {
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),
