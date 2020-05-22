@@ -9,6 +9,7 @@ namespace Cw3WebApplication.Models
         public string IndexNumber { get; set; }
         public int IdEnrollment { get; set; }
         public DateTime BirthDate { get; set; }
+        public string Password { get; set; }
 
         // additional info:
         public string Studies { get; set; } //it is "StudyName" id DB

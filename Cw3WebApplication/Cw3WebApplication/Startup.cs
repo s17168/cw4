@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Wyklad5.Services;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Cw3WebApplication
 {
@@ -23,6 +26,23 @@ namespace Cw3WebApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Uwierzytelnianie za pomoca JWT token
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        // walidacja
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidIssuer = "Gakko",
+                            ValidAudience = "Students",
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"])) //SecretKey jest odczytywane z secrets.json
+                        };
+                    });
+
             //services.AddScoped<>
             services.AddSingleton<IDbService, MsqlDbService>();
             services.AddTransient<IStudentsDbService, SqlServerStudentDbService>();
