@@ -3,7 +3,6 @@ using Cw3WebApplication.Middleware;
 using Cw3WebApplication.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +34,12 @@ namespace Cw3WebApplication
             {
                 config.SwaggerDoc("v1", new OpenApiInfo { Title = "Students API", Version = "v1" });
             });
+
+            // Add this for basic auth with BasicAuthHandler
+            //services.AddAuthentication("AuthenticationBasic")
+            //      .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("AuthenticationBasic", null);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +63,7 @@ namespace Cw3WebApplication
             // Add LoggingMiddleware
             app.UseMiddleware<LoggingMiddleware>();
 
-            app.UseAuthorization();
+            app.UseRouting();
 
             // disable middleware which checks for index in header
             /*app.Use(async (context, next) =>
@@ -82,7 +87,8 @@ namespace Cw3WebApplication
             });
             */
 
-            app.UseRouting();
+            //app.UseAuthentication(); add for basic auth
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
