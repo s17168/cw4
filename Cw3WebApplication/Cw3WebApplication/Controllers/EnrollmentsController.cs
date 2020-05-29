@@ -102,31 +102,39 @@ namespace Cw3WebApplication.Controllers
             }
 
             var token = _studentsDbService.GetJwtToken();
+            var refreshToken = Guid.NewGuid(); // is unique and has no information 
+
+            _studentsDbService.SaveRefreshTokenInDb(refreshToken, student);
 
             return Ok(new
             {
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                refreshToken = Guid.NewGuid() // is unique and has no information 
+                refreshToken
             });
         }
 
         [HttpPost("refresh-token/{reftoken}")]
-        public IActionResult RefreshToken(string reftoken)
+        public IActionResult RefreshToken(string reftoken, string login)
         {
             Console.WriteLine("Refresh token from client: "+ reftoken);
+            var student = _studentsDbService.GetStudent(login);
+
             // spr w bazie czy istnieje juz token - jak tak to zwracamy nowy
-            bool tokenExists = true; // nie implementuje spr w bazie bo to bedzie bardzo podobne do tego co wyzej
+            bool tokenExists = student.Refreshtoken == reftoken; 
             if (!tokenExists)
             {
                 return BadRequest();
             }
 
             var token = _studentsDbService.GetJwtToken();
+            var refreshToken = Guid.NewGuid(); // is unique and has no information 
+
+            _studentsDbService.SaveRefreshTokenInDb(refreshToken, student);
 
             return Ok(new
             {
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                refreshToken = Guid.NewGuid() // is unique and has no information 
+                refreshToken
             });
         }
 

@@ -273,5 +273,23 @@ namespace Wyklad5.Services
             }
         }
 
+        public void SaveRefreshTokenInDb(Guid refreshToken, Student student) 
+        {
+            using (var connection = new SqlConnection(sqlConnecionStr))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+
+                command.CommandText = "UPDATE student set Refreshtoken = @refreshToken WHERE Student.IndexNumber = @index;";
+                command.Parameters.AddWithValue("@index", student.IndexNumber);
+                command.Parameters.AddWithValue("@refreshToken", refreshToken);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+
+        }
+
+
     }
 }
