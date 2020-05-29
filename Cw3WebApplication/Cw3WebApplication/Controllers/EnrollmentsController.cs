@@ -62,6 +62,28 @@ namespace Cw3WebApplication.Controllers
             return Ok("Successfully promoted all students to next semester");
         }
 
+        // Student uses it to provide his password - temporary we are letting anyone create his password
+        [HttpPost]
+        [Route("register")]
+        [AllowAnonymous]
+        public IActionResult RegisterNewUser(LoginRequestDto request)
+        {
+            Console.WriteLine("Register new user");
+            var student = _studentsDbService.GetStudent(request.Login);
+            if (student.HashedPassword.Equals(""))
+            {
+                // We are good to go, we can register new student - he haven't registered before
+                Console.WriteLine("New user will be registered. Saving his credentials to DB");
+            } else
+            {
+                return BadRequest("Student is already registered. ");
+            }
+
+            //saving student's password in DB (hashed + salt)
+            _studentsDbService.RegisterNewStudent(student, request.Password);
+            return Ok("Your password has been saved");
+        }
+
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
@@ -70,17 +92,17 @@ namespace Cw3WebApplication.Controllers
             // TODO: Move all this logic to DBService
             var student = _studentsDbService.GetStudent(request.Login);
 
-            if (student.Password.Equals(request.Password))
+            if (_studentsDbService.CheckUserPassword(student, request.Password))
             {
-                Console.WriteLine("Pass confirmed");
+                Console.WriteLine("Password confirmed");
             }
-            else {
+            else
+            {
                 return BadRequest("Password dont match");
             }
 
             var token = _studentsDbService.GetJwtToken();
 
-            //return Ok("success");
             return Ok(new
             {
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),

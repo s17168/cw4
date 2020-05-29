@@ -1,6 +1,8 @@
 ﻿using Cw3WebApplication.DTOs.Requests;
 using Cw3WebApplication.DTOs.Responses;
 using Cw3WebApplication.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,6 +11,7 @@ using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Wyklad5.Services
@@ -20,7 +23,6 @@ namespace Wyklad5.Services
         public IConfiguration Configuration { get; set; }
 
         private static string sqlConnecionStr = "Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True";
-
 
         public SqlServerStudentDbService(IConfiguration configuration)
         {
@@ -166,7 +168,9 @@ namespace Wyklad5.Services
                 student.FirstName = dr["FirstName"].ToString();
                 student.LastName = dr["LastName"].ToString();
                 student.IndexNumber = dr["IndexNumber"].ToString();
-                student.Password = dr["Password"].ToString();
+                student.HashedPassword = dr["HashedPassword"].ToString();
+                student.Salt = dr["Salt"].ToString();
+                student.Refreshtoken = dr["Refreshtoken"].ToString();
             }
             return student;
         }
@@ -195,6 +199,78 @@ namespace Wyklad5.Services
             );
 
             return token;
+        }
+
+        public void RegisterNewStudent(Student student, string plainTextPassword) 
+        {
+            // This function is to register new student 
+            // we will created hashed salted password and store it in db with salt
+            //Console.WriteLine("Registering new student with password: " + plainTextPassword); // only for debug~!
+            var salt = CreateSalt();
+            var saltedPassword = Create(plainTextPassword, salt);
+
+            student.HashedPassword = saltedPassword;
+            student.Salt = salt;
+
+            //Console.WriteLine("To register in DB hashed pass " + saltedPassword + ", salt " + salt); // only for debug~!
+
+            using (var connection = new SqlConnection(sqlConnecionStr))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+
+                command.CommandText = "UPDATE student set HashedPassword = @hashedpass, Salt = @salt WHERE Student.IndexNumber = @index;";
+                command.Parameters.AddWithValue("@index", student.IndexNumber);
+                command.Parameters.AddWithValue("@hashedpass", student.HashedPassword);
+                command.Parameters.AddWithValue("@salt", student.Salt);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+
+            //Console.WriteLine("Registered in DB hashed pass " + saltedPassword + ", salt " + salt); // only for debug~!
+        }
+
+        public bool CheckUserPassword(Student student, string plainTextUserPass)
+        {
+            var salt = student.Salt;
+            var hashedPass = student.HashedPassword;
+
+            if (Validate(plainTextUserPass, salt, hashedPass))
+            {
+                Console.WriteLine("Password validated");
+                return true;
+            }
+            else {
+                Console.WriteLine("Could not validate user password.");
+                return false;
+            }
+        }
+
+        public static string Create(string value, string salt)
+        {
+            var valueBytes = KeyDerivation.Pbkdf2(
+                    password: value,
+                    salt: Encoding.UTF8.GetBytes(salt),
+                    prf: KeyDerivationPrf.HMACSHA512,
+                    iterationCount: 10000,
+                    numBytesRequested: 128);
+            return Convert.ToBase64String(valueBytes);
+        }
+
+        // checking if password pass which is in DB matches the new pass hash which
+        // is generated with current hashed pass with current salt
+        public static bool Validate(string userPass, string salt, string hash)
+            => Create(userPass, salt) == hash;
+
+        public static string CreateSalt()
+        {
+            byte[] randomBytes = new byte[64]; // or: 128 / 
+            using (var generator = RandomNumberGenerator.Create())
+            {
+                generator.GetBytes(randomBytes);
+                return Convert.ToBase64String(randomBytes);
+            }
         }
 
     }

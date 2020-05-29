@@ -11,5 +11,7 @@ namespace Wyklad5.Services
         void PromoteStudents(int semester, string studies);
         Student GetStudent(string index);
         JwtSecurityToken GetJwtToken();
+        void RegisterNewStudent(Student student, string password);
+        bool CheckUserPassword(Student student, string password);
     }
 }

@@ -18,7 +18,9 @@ CREATE TABLE Student (
     LastName nvarchar(100)  NOT NULL,
     BirthDate date  NOT NULL,
     IdEnrollment int  NOT NULL,
-	Password nvarchar(100),
+	HashedPassword nvarchar(4000),
+	Salt nvarchar(4000),
+	Refreshtoken nvarchar(4000),
     CONSTRAINT Student_pk PRIMARY KEY  (IndexNumber)
 );
 
