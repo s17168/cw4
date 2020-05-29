@@ -7,6 +7,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 using System.Text;
 
@@ -17,6 +18,8 @@ namespace Wyklad5.Services
         //public object Configuration { get; private set; }
 
         public IConfiguration Configuration { get; set; }
+
+        private static string sqlConnecionStr = "Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True";
 
 
         public SqlServerStudentDbService(IConfiguration configuration)
@@ -32,7 +35,7 @@ namespace Wyklad5.Services
             var startDate = DateTime.Now;
             var semester = 1;
 
-            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var connection = new SqlConnection(sqlConnecionStr))
             using (var command = new SqlCommand())
             {
                 command.Connection = connection;
@@ -124,7 +127,7 @@ namespace Wyklad5.Services
 
         public void PromoteStudents(int semester, string studies) // params not in body but in query string! 
         {
-            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var connection = new SqlConnection(sqlConnecionStr))
             using (var command = new SqlCommand("PromoteStudents"))
             {
                 command.CommandType = CommandType.StoredProcedure;
@@ -143,7 +146,7 @@ namespace Wyklad5.Services
         {
             var student = new Student();
 
-            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var connection = new SqlConnection(sqlConnecionStr))
             using (var command = new SqlCommand())
             {
                 command.Connection = connection;

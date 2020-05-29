@@ -12,6 +12,8 @@ namespace Cw3WebApplication.DAL
 
         private static List<Student> _students;
 
+        private static string sqlConnecionStr = "Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True";
+
         static MsqlDbService()
         {
             _students = new List<Student>();
@@ -26,7 +28,7 @@ namespace Cw3WebApplication.DAL
         {
             _students = new List<Student>(); //clean already added students, alwes retrieve new List from DB
 
-            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var connection = new SqlConnection(sqlConnecionStr))
             using (var command = new SqlCommand())
             {
                 command.Connection = connection;
@@ -58,7 +60,7 @@ namespace Cw3WebApplication.DAL
 
         public Enrollment GetEnrollment(string idStudent)
         {
-            using (var connection = new SqlConnection("Data Source=db-mssql;Initial Catalog=s17168;Integrated Security=True"))
+            using (var connection = new SqlConnection(sqlConnecionStr))
             using (var command = new SqlCommand())
             {
                 Console.WriteLine(idStudent);
